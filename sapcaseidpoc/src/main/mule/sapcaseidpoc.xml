@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="15b3cd6f-eb88-4bd6-b9f5-36e79cfeac06" >
+		<wsc:connection wsdlLocation="api/SI_ServiceNotification_OutService.wsdl" service="SI_ServiceNotification_OutService" port="HTTPS_Port" address="https://sappiddbci01.strykercorp.com:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=BC_MULESOFT&amp;receiverParty=&amp;receiverService=&amp;interface=SI_ServiceNotification_Out&amp;interfaceNamespace=http%3A%2F%2Fstryker.com%2Fsap%2Fpi%2FOTC%2FServiceOrderCreation%2F4002" />
+	</wsc:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c4a9d412-af07-4a30-be2b-9ddc3474a546" >
+		<http:listener-connection host="0.0.0.0" port="8001" />
+	</http:listener-config>
+	<flow name="sapcaseidpocFlow" doc:id="f6b17bd6-2520-4f7e-848c-124be6b2a56f" >
+		<http:listener doc:id="5d73e7cb-5fc8-4972-904b-c6b4cf0b92bd" doc:name="" config-ref="HTTP_Listener_config" path="/case"/>
+		<ee:transform doc:name="Transform Message" doc:id="cd96e873-f71c-472d-8b11-9172a09adff7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="SI_ServiceNotification_Out" doc:name="Consume" doc:id="6b31228d-dc5c-4fb1-aa7e-09638e25a86d" config-ref="Web_Service_Consumer_Config"/>
+	</flow>
+</mule>
